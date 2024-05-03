@@ -20,11 +20,12 @@ namespace SearchEngine
 
         vector<string> cut(const string &sentence)
         {
+
             char dictpath[] = "../data/dict/jieba.dict.utf8";
             char hmmmodetl[] = "../data/dict/hmm_model.utf8";
-            char userdict[] = "../datadict/user.dict.utf8";
-            char idfpath[] = "../datadict/idf.utf8";
-            char stopwords[] = "../datadict/stop_words.utf8";
+            char userdict[] = "../data/dict/user.dict.utf8";
+            char idfpath[] = "../data/dict/idf.utf8";
+            char stopwords[] = "../data/dict/stop_words.utf8";
 
             cppjieba::Jieba jieba(dictpath, hmmmodetl, userdict, idfpath, stopwords);
 
@@ -48,15 +49,19 @@ namespace SearchEngine
                 if (0 == _stopWords.count(w) && getByteNum_utf8(ch) == 3)
                 {
                     result.push_back(w);
+                    //std::cout << w << "\n";
+                }else{
+                    //std::cout << w << "\n";
                 }
             }
-
+            // std::cout << ">>" << result << "\n";
+            // std::cout << ">>  CppJieba Cut the Number of Chinese Words：" << result.size() << "\n";
             return result;
         }
 
         void initStopWords(const set<string> &lhs)
         {
-            std::cout << ">> 初始化中文停用词数量：" << lhs.size() << std::endl;
+            std::cout << ">>  Initialize the Number of Chinese Stop Words：" << lhs.size() << std::endl;
             _stopWords = lhs;
         }
 

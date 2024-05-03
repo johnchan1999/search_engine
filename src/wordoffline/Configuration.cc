@@ -120,11 +120,16 @@ set<string> Configuration::getCnStopWordList()
     {
         string line;
         while (std::getline(inputCn, line))
-        {
+         {
+               if(*line.rbegin() == '\r')
+           {
+                 line.erase(line.length() - 1);
+             }
             _cnStopWordList.insert(line);
         }
         inputCn.close();
     }
+   
     return _cnStopWordList;
 }
 

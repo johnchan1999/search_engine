@@ -68,8 +68,7 @@ namespace SearchEngine
                 _log.error(LOGPATTERN(__FILE__, __LINE__));
                 exit(1);
             }
-            closedir(pdir); // TODO::
-        }
+                }
         return 0;
     }
 
@@ -162,6 +161,7 @@ namespace SearchEngine
 
         for (auto &filepath : _files)
         {
+            std::cout << filepath << "\n";
             _log.info(LOGPATTERN(__FILE__, __LINE__));
             std::ifstream input(filepath, std::ios_base::ate);
 
@@ -250,6 +250,7 @@ namespace SearchEngine
     {
         char *buf = new char[length + 1];
         input.read(buf, length + 1);
+       // std::cout << buf << "\n";
 
         vector<string> vec(_splitTool->cut(buf));
 

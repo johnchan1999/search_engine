@@ -119,7 +119,7 @@ namespace SearchEngine
     {
         json jsonData;
         string retWord;
-        std::cout << ">> 返回关键词数：" << _resultQue.size() << std::endl;
+        std::cout << ">> Return key word count：" << _resultQue.size() << std::endl;
         if (_resultQue.size() > 8)
         {
             for (int i = 0; i < 8; ++i)

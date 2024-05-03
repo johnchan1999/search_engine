@@ -66,7 +66,7 @@ namespace SearchEngine
 
         void initStopWords(const set<string> &lhs)
         {
-            std::cout << ">> 初始化英文停用词数量：" << lhs.size() << std::endl;
+            std::cout << ">>  Initialize the Number of English Stop Words：" << lhs.size() << std::endl;
             _stopWords = lhs;
         }
 
