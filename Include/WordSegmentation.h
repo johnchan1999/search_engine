@@ -1,55 +1,41 @@
 #pragma once
-#ifndef __ALOPEX_WebPage_H__
-#define __ALOPEX_WebPage_H__
+#ifndef __ALOPEX_WordSegmentation_HPP__
+#define __ALOPEX_WordSegmentation_HPP__
 
-#include "WebConfiguration.h"
-
+#include "cppjieba/Jieba.hpp"
+#include <iostream>
 #include <string>
 #include <vector>
-#include <unordered_map>
-
+using std::cout;
+using std::endl;
 using std::string;
-using std::unordered_map;
 using std::vector;
 
-// 前向声明
-class WordSegmentation;
+const char *const DICT_PATH = "/home/skycrash/cppjieba-master/dict/jieba.dict.utf8";      // 最大概率法(MPSegment: Max Probability)分词所使用的词典路径
+const char *const HMM_PATH = "/home/skycrash/cppjieba-master/dict/hmm_model.utf8";        // 隐式马尔科夫模型(HMMSegment: Hidden Markov Model)分词所使用的词典路径
+const char *const USER_DICT_PATH = "/home/skycrash/cppjieba-master/dict/user.dict.utf8";  // 用户自定义词典路径
+const char *const IDF_PATH = "/home/skycrash/cppjieba-master/dict/idf.utf8";              // IDF路径
+const char *const STOP_WORD_PATH = "/home/skycrash/cppjieba-master/dict/stop_words.utf8"; // 停用词路径
 
-const static int TOPK_NUMBER = 20;
-
-class WebPage
+class WordSegmentation // 使用结巴分词库进行分词
 {
-    // 全局函数做友元
-    friend bool operator==(const WebPage &lhs, const WebPage &rhs);
-    friend bool operator<(const WebPage &lhs, const WebPage &rhs);
-
 public:
-    WebPage(string &doc, Configuration &config, WordSegmentation &jieba);
-    ~WebPage();
-    void processDoc();
-    string getDoc();
-    int getDocID();
-    string getTitle();
-    string getUrl();
-    string getContent();
-    int getTotalWords();
-    void statisticsWord();
-    unordered_map<string, int> &getWordsMap();
-    void calcTopK(int k);
+    WordSegmentation()
+        : _jieba(DICT_PATH, HMM_PATH, USER_DICT_PATH, IDF_PATH, STOP_WORD_PATH) // 初始化Jieba类对象
+    {
+        /* cout << "cppjieba init!" << endl; */
+    }
+
+    vector<string> operator()(const string str) // 返回str的分词结果
+    {
+        vector<string> words;
+        /* _jieba.CutAll(str, words);//FullSegment */
+        _jieba.Cut(str, words, true);
+        return words;
+    }
 
 private:
-    size_t checkUTF8(const char ch);
-
-private:
-    string _doc;                          // 包括xml在内的整篇文档
-    int _docID;                           // 文档id
-    string _docTitle;                     // 文档标题
-    string _docUrl;                       // 文档URL
-    string _docContent;                   // 文档内容  (content 标签的内容)
-    vector<string> _topWords;             // 词频最高的前20个词
-    unordered_map<string, int> _wordsMap; // 每篇文档的词语和词频（不包含停用词）
-    Configuration &_config;               // 配置文件类对象的引用
-    WordSegmentation &_jieba;             // 分词对象
+    cppjieba::Jieba _jieba;
 };
 
 #endif

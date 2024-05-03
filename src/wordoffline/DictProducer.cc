@@ -192,41 +192,59 @@ namespace SearchEngine
         _temdict.clear();
     }
 
-    // 建立中文索引
-    void DictProducer::buildCnIndex()
+ // 建立全汉字中文索引
+void DictProducer::buildCnIndex()
+{
+    _indexTable.clear();
+    int line = 1;
+    for (auto &i : _dict)
     {
-        _indexTable.clear();
-        int line = 1;
-        for (auto &i : _dict)
+        string target = i.first; // 拿到每个中文词汇
+        // 假设 target 是 UTF-8 编码
+        for (size_t idx = 0; idx < target.size();)
         {
-            string target = i.first;
-            string comstr = target.substr(0, 3);
-            auto pmap = _indexTable.find(comstr);
-
-            if (pmap != _indexTable.end())
+            if ((target[idx] & 0xF0) == 0xE0 && idx + 2 < target.size()) // 确保是3字节字符
             {
-                _indexTable[comstr].insert(line);
+                string comstr = target.substr(idx, 3); // 获取一个汉字（3字节）
+                auto pmap = _indexTable.find(comstr);
+
+                if (pmap != _indexTable.end())
+                {
+                    _indexTable[comstr].insert(line);
+                }
+                else
+                {
+                    _indexTable.insert({comstr, {line}});
+                }
+                idx += 3; // 移动到下一个汉字的起始字节
             }
             else
             {
-                _indexTable.insert({comstr, {line}});
+                // 非中文字符或不是有效的UTF-8汉字编码
+                ++idx; // 在UTF-8中，ASCII字符只有一个字节
             }
-            ++line;
         }
+        ++line;
     }
+}
 
-    // 建立英文索引
-    void DictProducer::buildEnIndex()
+
+
+
+// 建立全字母英文索引
+void DictProducer::buildEnIndex()
+{
+    _indexTable.clear();
+    int line = 1;
+    for (auto &i : _dict)
     {
-        _indexTable.clear();
-        int line = 1;
-        for (auto &i : _dict)
+        string target = i.first;  // 拿到每个单词
+        for (char ch : target)    // 遍历单词中的每个字符
         {
-            string target = i.first;
-            char firstAlpha = i.first[0];
-            if ((firstAlpha >= 97 && firstAlpha <= 122))
+            if (isalpha(ch))     // 确保字符是字母
             {
-                string comstr(1, firstAlpha);
+                ch = tolower(ch);  // 转换为小写，确保索引的一致性
+                string comstr(1, ch);
                 auto pmap = _indexTable.find(comstr);
                 if (pmap != _indexTable.end())
                 {
@@ -237,20 +255,45 @@ namespace SearchEngine
                     _indexTable[comstr] = {line};
                 }
             }
-            else
-            {
-                continue;
-            }
-            ++line;
         }
+        ++line;
     }
+}
+
+// void DictProducer::buildEnIndex()
+// {
+//     _indexTable.clear();
+//     int line = 1;
+//     for (auto &i : _dict)
+//     {
+//         string target = i.first;
+//         char firstAlpha = i.first[0];
+//         if ((firstAlpha >= 97 && firstAlpha <= 122))
+//         {
+//             string comstr(1, firstAlpha);
+//             auto pmap = _indexTable.find(comstr);
+//             if (pmap != _indexTable.end())
+//             {
+//                 _indexTable[comstr].insert(line);
+//             }
+//             else
+//             {
+//                 _indexTable[comstr] = {line};
+//             }
+//         }
+//         else
+//         {
+//             continue;
+//         }
+//         ++line;
+//     }
+// } 
 
     // 读小文件
     void DictProducer::readSmallFile(std::ifstream &input, int length)
     {
         char *buf = new char[length + 1];
         input.read(buf, length + 1);
-       // std::cout << buf << "\n";
 
         vector<string> vec(_splitTool->cut(buf));
 

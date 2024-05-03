@@ -44,7 +44,7 @@ namespace SearchEngine
 
     private:
         vector<pair<string, int>> _dict;             // 词典：短语 + 词频
-        unordered_map<string, set<int>> _indexTable; // 存放索引: 首个词 + 词典文件的行数集合
+        unordered_map<string, set<int>> _indexTable; // 存放索引: 词 + 词典文件的行数集合
         map<string, string> _confpath;               // 配置文件内容: 关键词 + 路径
         Configuration &_conf;                        // 配置文件类
         vector<string> _files;                       // 语料库文件的绝对路径集合
