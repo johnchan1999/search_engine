@@ -7,6 +7,8 @@
 #include "FileProcessor.h"
 #include <map>
 #include <utility>
+//
+
 using std::pair;
 using std::map;
 
@@ -21,10 +23,9 @@ public:
     // 创建位置偏移库
     void createOffsetLib();
 
-    // 创建网页库
-    //void creat();
-    // 存储网页库和位置偏移库
-    //void store();
+    //计算网页内容的指纹，用于后续的网页去重
+    void simhash();
+
 private:
     // 保存网页库
     void storePageLib();
@@ -46,6 +47,8 @@ private:
     vector<RssItem> _pageLib;
     // 存放每篇文档在网页库的位置信息（位置偏移库）
     map<int, pair<int, int>> _offsetLib;
+
+   
 };
 
 

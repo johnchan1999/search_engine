@@ -15,61 +15,58 @@
 
 namespace SearchEngine
 {
-using std::string;
+    using std::string;
 
-class MyLog
-{
-public:
-    MyLog()
-    : _appender(new log4cpp::FileAppender("default", "../log/programe.log"))
-    , _user(log4cpp::Category::getInstance("chenao"))
+    class MyLog
     {
-        _user.setPriority(log4cpp::Priority::DEBUG);
-        log4cpp::PatternLayout *layout = new log4cpp::PatternLayout();
-        layout->setConversionPattern("%d{%Y-%m-%d %H:%M:%S} [%p] %c: %m%n");
-        _appender->setLayout(layout);
-        _user.addAppender(_appender);
-    }
+    public:
+        MyLog()
+            : _appender(new log4cpp::FileAppender("default", "../log/programe.log")), _user(log4cpp::Category::getInstance("johnchan"))
+        {
+            _user.setPriority(log4cpp::Priority::DEBUG);
+            log4cpp::PatternLayout *layout = new log4cpp::PatternLayout();
+            layout->setConversionPattern("%d{%Y-%m-%d %H:%M:%S} [%p] %c: %m%n");
+            _appender->setLayout(layout);
+            _user.addAppender(_appender);
+        }
 
-    MyLog(const string &logfilename, const string &usrname)
-    : _appender(new log4cpp::FileAppender("default", logfilename))
-    , _user(log4cpp::Category::getRoot())
-    {
-        _appender->setLayout(new log4cpp::BasicLayout());
-        _user.addAppender(_appender);
-        _user.setPriority(log4cpp::Priority::DEBUG);
-    }
+        MyLog(const string &logfilename, const string &usrname)
+            : _appender(new log4cpp::FileAppender("default", logfilename)), _user(log4cpp::Category::getRoot())
+        {
+            _appender->setLayout(new log4cpp::BasicLayout());
+            _user.addAppender(_appender);
+            _user.setPriority(log4cpp::Priority::DEBUG);
+        }
 
-    ~MyLog()
-    {
-        log4cpp::Category::shutdown();
-    }
+        ~MyLog()
+        {
+            log4cpp::Category::shutdown();
+        }
 
-    void error(const string &msg)
-    {
-        _user.error(msg);
-    }
+        void error(const string &msg)
+        {
+            _user.error(msg);
+        }
 
-    void warn(const string &msg)
-    {
-        _user.warn(msg);
-    }
+        void warn(const string &msg)
+        {
+            _user.warn(msg);
+        }
 
-    void info(const string &msg)
-    {
-        _user.info(msg);
-    }
+        void info(const string &msg)
+        {
+            _user.info(msg);
+        }
 
-    void debug(const string &msg)
-    {
-        _user.debug(msg);
-    }
+        void debug(const string &msg)
+        {
+            _user.debug(msg);
+        }
 
-private:
-    log4cpp::Appender   *_appender;
-    log4cpp::Category       &_user;
-
-};
+    private:
+        log4cpp::Appender *_appender;
+        log4cpp::Category &_user;
+    };
 
 }; // end of SearchEngine
 
