@@ -96,10 +96,21 @@ void PageLibProcessor::cutRedundantPages()
         string doc(buf);
         WebPage page(doc, _conf, _jieba);
         delete[] buf;
-        if (std::find(_pageLib.begin(), _pageLib.end(), page) == _pageLib.end())
+        
+        auto it =std::find(_pageLib.begin(), _pageLib.end(), page);
+        if(it != _pageLib.end())
         {
+            cout << "重复" << "\n";
+        }
+        else
+        {
+            cout << "插入" << "\n";
             _pageLib.push_back(std::move(page));
         }
+
+
+
+    
     }
 
     offsetFile.close();

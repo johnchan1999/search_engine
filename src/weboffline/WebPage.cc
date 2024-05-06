@@ -19,11 +19,7 @@ WebPage::WebPage(string &doc, Configuration &config, WordSegmentation &jieba)
 {
     processDoc();
     statisticsWord();
-    if (_wordsMap.size() >= 20)
-    {
-        //cout << "calcTopK" << endl;
-        calcTopK(TOPK_NUMBER);
-    }
+    calculateSimHash();
 }
 
 WebPage::~WebPage() {}
@@ -152,44 +148,55 @@ public:
     }
 };
 
+void WebPage::calculateSimHash()
+{
+    Simhasher simhasher("/root/search_engine/data/dict/jieba.dict.utf8", "/root/search_engine/data/dict/hmm_model.utf8", "/root/search_engine/data/dict/idf.utf8", "/root/search_engine/data/dict/stop_words.utf8");
+    string s(_docContent);
+    size_t topN = 5;
+    uint64_t u64 = 0;
+    vector<pair<string, double>> res;
+    simhasher.extract(s, res, topN);
+    simhasher.make(s, topN, u64);
+
+    _simhash = u64;
+}
+
 // 这篇文档统计完词频后再求TopK
 // 求取文档的topK词集
-void WebPage::calcTopK(int k)
-{
-    priority_queue<pair<string, int>, vector<pair<string, int>>, MyCompare> myQue;
-    for (auto elem : _wordsMap)
-    {
-        myQue.push(elem);
-        if ((int)myQue.size() > k)
-        {
-            myQue.pop();
-        }
-    }
+// void WebPage::calcTopK(int k)
+// {
+//     priority_queue<pair<string, int>, vector<pair<string, int>>, MyCompare> myQue;
+//     for (auto elem : _wordsMap)
+//     {
+//         myQue.push(elem);
+//         if ((int)myQue.size() > k)
+//         {
+//             myQue.pop();
+//         }
+//     }
 
-    for (int i = 0; i < k; ++i)
-    {
-        // MyQue的每一个元素都是一个pair对
-        _topWords.push_back(myQue.top().first);
-        myQue.pop();
-    }
+//     for (int i = 0; i < k; ++i)
+//     {
+//         // MyQue的每一个元素都是一个pair对
+//         _topWords.push_back(myQue.top().first);
+//         myQue.pop();
+//     }
 
-    // 建立的是小根堆，堆顶元素的出现频率是最小的，放到数组的最后面
-    // 将数组元素做个交换即可
-    reverse(_topWords.begin(), _topWords.end());
-}
+//     // 建立的是小根堆，堆顶元素的出现频率是最小的，放到数组的最后面
+//     // 将数组元素做个交换即可
+//     reverse(_topWords.begin(), _topWords.end());
+// }
 
 // 全局函数做友元
 // 判断两篇文档是否相等
 bool operator==(const WebPage &lhs, const WebPage &rhs)
 {
-    vector<string> vec1 = lhs._topWords;
-    vector<string> vec2 = rhs._topWords;
-    vector<string> intersection;
-    std::set_intersection(vec1.begin(), vec1.end(), vec2.begin(), vec2.end(), back_inserter(intersection));
-    if (intersection.size() >= 10) // 相同高频词的交集个数
-        return true;
-    else
-        return false;
+    uint64_t vec1 = lhs._simhash;
+    uint64_t vec2 = rhs._simhash;
+
+    bool ret = Simhasher::isEqual(vec1, vec2);
+    //cout << "ret = " << ret << "\n";
+    return ret;
 }
 
 // 对文档按DocID进行排序
