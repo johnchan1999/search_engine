@@ -45,13 +45,20 @@ namespace OurPool
             string result = checkLRU(1, word, cache);
             cout << "result==" << result << endl;
 
-            if (" " == result)
+            if ("" == result)
             {
+
                 result = getKeyRecommander(word, _con);
+
+                cout << "read result==" << result << endl;
                 std::cout << ">> 读取磁盘返回关键词查询结果成功 " << std::endl;
                 if (storeToLRU(1, word, result, cache) == false)
                 {
                     std::cerr << "Error: 53 :storedRedis keyword failed" << result << std::endl;
+                }
+                else
+                {
+                    std::cout << ">> LRU存储关键词成功 " << result << std::endl;
                 }
             }
             else
@@ -78,7 +85,7 @@ namespace OurPool
             std::cout << ">> 收到客户端查询词：" << word << std::endl;
             string result = checkLRU(2, word, cache);
 
-            if (" " == result)
+            if ("" == result)
             {
                 result = getWebRecommander(word);
                 std::cout << ">> 读取磁盘获取网页查询结果成功 " << result << std::endl;
@@ -115,8 +122,7 @@ namespace OurPool
 
         bool storeToLRU(int flag, const string &key, const string &value, LRUCache &cache)
         {
-            cache.addelement(key, value);
-            return true;
+            return cache.addelement(key, value);
         }
 
         string getKeyRecommander(string msg, TcpConnectionPtr &con)

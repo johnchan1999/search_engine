@@ -15,18 +15,29 @@ string LRUCache::getelement(const string &key)
         return "";
     }
 }
-void LRUCache::addelement(const string &key, const string &value)
+bool LRUCache::addelement(const string &key, const string &value)
 {
+    // 检查是否已经达到容量上限
+    if (_size >= _capacity) {
+        return false; // 添加失败，因为已经达到容量上限
+    }
+
+    // 添加元素到结果列表和哈希表
     _resultlist.push_front(make_pair(key, value));
     _pendingupdatelist.push_back(make_pair(key, value));
     _hashmap[key] = _resultlist.begin();
     _size++;
-    if (_size > _capacity)
-    {
+
+    // 如果超出容量，移除最久未使用的元素
+    if (_size > _capacity) {
         _hashmap.erase(_resultlist.back().first);
         _resultlist.pop_back();
+        _size--; // 减少大小计数，因为我们移除了一个元素
     }
+
+    return true; // 添加成功
 }
+
 void LRUCache::readfromfile(const string &filename)
 {
     unordered_map<string, list<pair<string, string>>::iterator> tmp_map;

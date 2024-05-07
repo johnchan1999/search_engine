@@ -16,7 +16,7 @@ public:
     LRUCache(int);
     LRUCache(const LRUCache &);
     string getelement(const string &);
-    void addelement(const string &, const string &);
+    bool addelement(const string &, const string &);
     void readfromfile(const string &filename);
     void writetofile(const string &filename);
     void update(LRUCache &);

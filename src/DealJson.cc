@@ -36,6 +36,7 @@ void DealJson::packet()
     _jsonObj["length"] = _word.length(); // 待查询内容的长度
 
     _result[1] = _jsonObj.dump();
+    
 }
 
 // json字符串解析
