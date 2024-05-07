@@ -45,6 +45,7 @@ private:
     FileProcessor &_process;
     // 存放格式化之后的网页(网页库)
     vector<RssItem> _pageLib;
+    
     // 存放每篇文档在网页库的位置信息（位置偏移库）
     map<int, pair<int, int>> _offsetLib;
 

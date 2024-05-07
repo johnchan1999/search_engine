@@ -12,7 +12,7 @@ int main(){
     Configuration *pConf = Configuration::getInstance(confPath);
     
     /* WebPageSearch search(keys, conn); */
-    string keys = "供电";
+    string keys = "太阳能电池供电";
     std::cout << ">> 输入词：" << keys << std::endl;
     WebPageQuery query(*pConf);
     WebPageSearch search(keys);

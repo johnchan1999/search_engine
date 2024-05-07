@@ -20,10 +20,10 @@ WebPage::WebPage(string &doc, Configuration &config, WordSegmentation &jieba)
     processDoc();
     statisticsWord();
     //calculateSimHash();
-    if (_wordsMap.size() >= 20)
-    {
-        calcTopK(TOPK_NUMBER);
-    }
+    // if (_wordsMap.size() >= 20)
+    // {
+    //     calcTopK(TOPK_NUMBER);
+    // }
 }
 
 WebPage::~WebPage() {}

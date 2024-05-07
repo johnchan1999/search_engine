@@ -5,9 +5,9 @@
 #include "ThreadPool.h"
 #include "TcpServer.h"
 #include "TcpConnection.h"
-#include "KeyRecommander.hpp"
-#include "WebPageSearch.hpp"
-#include "ConnectionPool.hpp"
+#include "../KeyRecommander.h"
+#include "../WebPageSearch.h"
+#include "../ConnectionPool.h"
 
 #include <iostream>
 
@@ -171,14 +171,15 @@ namespace OurPool
         string getKeyRecommander(string msg, TcpConnectionPtr &con)
         {
             Dictionary *diction = Dictionary::createInstance();
-            diction->init("../data");
+            diction->init("/root/search_engine/data/datfile");
             KeyRecommander reckey(msg, con, *diction);
             reckey.execute();
+            
             return reckey.response();
         }
         string getWebRecommander(const string &msg)
         {
-            Configuration *cconf = Configuration::getInstance("../conf/myConf.conf");
+            Configuration *cconf = Configuration::getInstance("/root/search_engine/conf/WebConf.conf");
             WebPageQuery query(*cconf);
             WebPageSearch web(msg);
             return web.doQuery(query);

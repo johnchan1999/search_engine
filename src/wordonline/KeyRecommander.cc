@@ -55,14 +55,15 @@ namespace SearchEngine
         vector<set<int>> temp;
         for (auto &i : sword)
         {
+            
             if (_cnIndex.find(i) != _cnIndex.end())
-            {
-                temp.push_back(_cnIndex[i]);
+            {   
+                temp.push_back(_cnIndex[i]);                
             }
         }
 
         for (int i = 0; i < temp.size(); ++i)
-        {
+        {   
             statistic(0, temp[i]);
         }
     }
@@ -90,7 +91,8 @@ namespace SearchEngine
         {
             for (auto &tem : iset)
             {
-                auto &similiar = _cndict[tem];
+                int i = tem;
+                auto &similiar = _cndict[--i];
                 MyResult myresult(similiar.first, similiar.second, distance(similiar.first));
                 _resultQue.push(myresult);
             }

@@ -1,7 +1,7 @@
 
 #pragma once
-#ifndef __ALOPEX_PageLibProcessor_HPP__
-#define __ALOPEX_PageLibProcessor_HPP__
+#ifndef __PageLibProcessor_H__
+#define __PageLibProcessor_H__
 
 #include "WordSegmentation.h"
 #include "WebConfiguration.h"
@@ -9,9 +9,12 @@
 #include <vector>
 #include <utility>
 
+#include <unordered_set>
+
 using std::pair;
 using std::vector;
 
+using std::unordered_set;
 class PageLibProcessor
 {
 public:
@@ -35,7 +38,8 @@ private:
     string _fileOfWordCountPath; // 某个单词出现的文档数 保存路径
     Configuration &_conf;
     WordSegmentation _jieba;                                            // 分词对象
-    vector<WebPage> _pageLib;                                           // 网页库的容器对象
+    //unordered_set<WebPage> _pageSetLib;                                  // 网页库的容器对象
+    vector<WebPage> _pageLib;
     unordered_map<int, pair<int, int>> _offsetLib;                      // 网页偏移库对象
     unordered_map<string, vector<pair<int, double>>> _invertIndexTable; // 倒排索引表对象
     unordered_map<string, int> _fileOfWordCountMap;

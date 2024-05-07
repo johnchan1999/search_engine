@@ -1,24 +1,21 @@
 #pragma once
-#ifndef __ALOPEX_WebPage_HPP__
-#define __ALOPEX_WebPage_HPP__
+#ifndef __WebPage_H__
+#define __WebPage_H__
 
 #include "WebConfiguration.h"
 #include "WordSegmentation.h"
 #include <string>
 #include <vector>
 #include <unordered_map>
+#include <functional> 
 
 using std::string;
 using std::unordered_map;
 using std::vector;
 #include "simhash/Simhasher.hpp"
 
-
-
-#define LOGGER_LEVEL LL_WARN 
+#define LOGGER_LEVEL LL_WARN
 using namespace simhash;
-
-
 
 // 前向声明
 class WordSegmentation;
@@ -43,7 +40,7 @@ public:
     int getTotalWords();
     void statisticsWord();
     unordered_map<string, int> &getWordsMap();
-    void    calcTopK(int k);
+    void calcTopK(int k);
     void calculateSimHash();
 
 private:
@@ -61,5 +58,7 @@ private:
     WordSegmentation &_jieba;             // 分词对象
     uint64_t _simhash;                    // 存放每篇文档的指纹
 };
+
+
 
 #endif

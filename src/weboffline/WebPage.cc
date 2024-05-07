@@ -14,6 +14,8 @@ using std::priority_queue;
 using std::regex;
 using std::smatch;
 
+
+
 WebPage::WebPage(string &doc, Configuration &config, WordSegmentation &jieba)
     : _doc(doc), _config(config), _jieba(jieba)
 {
@@ -22,7 +24,12 @@ WebPage::WebPage(string &doc, Configuration &config, WordSegmentation &jieba)
     calculateSimHash();
 }
 
-WebPage::~WebPage() {}
+WebPage::~WebPage() {
+
+
+
+}
+
 
 // 获取文档
 string WebPage::getDoc()
