@@ -25,7 +25,7 @@ void ThreadPool::start()
     for(size_t idx = 0; idx < _threadNum; ++idx)
     {
         //线程池交给工作线程Thread做的任务，也就是doTask
-        unique_ptr<Thread> up(new Thread(std::bind(&ThreadPool::doTask, this)));
+        unique_ptr<Thread> up(new Thread(std::bind(&ThreadPool::doTask, this),std::to_string(idx)));
         _threads.push_back(std::move(up));
     }
 

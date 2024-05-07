@@ -8,48 +8,7 @@ using std::lock_guard;
 using std::mutex;
 using std::string;
 using std::vector;
-#if 0
-class redisLock
-{
-public:
-    redisLock()
-    : writeLock(PTHREAD_MUTEX_INITIALIZER)
-    , readLock(PTHREAD_MUTEX_INITIALIZER)
-    {
-        pthread_mutex_init(&readLock, NULL);
-        pthread_mutex_init(&writeLock, NULL);
-    }
-    ~redisLock()
-    {
-        pthread_mutex_destroy(&readLock);
-        pthread_mutex_destroy(&writeLock);
-    }
 
-    void lockRead()
-    {
-        pthread_mutex_lock(&writeLock);
-    }
-    void unLockRead()
-    {
-        pthread_mutex_unlock(&writeLock);
-    }
-    void lockwrite()
-    {
-        pthread_mutex_lock(&readLock);
-        pthread_mutex_lock(&writeLock);
-    }
-    void unlockwrite()
-    {
-        pthread_mutex_unlock(&readLock);
-        pthread_mutex_lock(&writeLock);
-    }
-
-
-private:
-    pthread_mutex_t writeLock = PTHREAD_MUTEX_INITIALIZER;
-    pthread_mutex_t readLock = PTHREAD_MUTEX_INITIALIZER;
-};
-#endif
 
 class ConnectionPool
 {
@@ -58,12 +17,6 @@ public:
     ~ConnectionPool();
 
     redisContext *getConnection(); // 获取一个连接
-#if 0
-    redisLock & getRedisLock()
-    {
-        return _redisLock;
-    }
-#endif
 
     void releaseConnection(redisContext *connection); // 释放连接
 

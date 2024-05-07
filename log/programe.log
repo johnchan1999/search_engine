@@ -334,3 +334,27 @@
 2024-05-07 00:50:24 [INFO] johnchan: [FILE:../src/wordonline/Dictionary.cc] [Line:223] getcnDict
 2024-05-07 00:50:24 [INFO] johnchan: [FILE:../src/wordonline/Dictionary.cc] [Line:229] getEnIndexTable
 2024-05-07 00:50:24 [INFO] johnchan: [FILE:../src/wordonline/Dictionary.cc] [Line:235] getCnIndexTable
+2024-05-07 16:03:48 [INFO] johnchan: [FILE:../src/wordonline/Dictionary.cc] [Line:31]
+2024-05-07 16:03:48 [INFO] johnchan: [FILE:../src/wordonline/Dictionary.cc] [Line:91] init finish
+2024-05-07 16:03:48 [INFO] johnchan: [FILE:../src/wordonline/Dictionary.cc] [Line:217] getenDict
+2024-05-07 16:03:48 [INFO] johnchan: [FILE:../src/wordonline/Dictionary.cc] [Line:223] getcnDict
+2024-05-07 16:03:48 [INFO] johnchan: [FILE:../src/wordonline/Dictionary.cc] [Line:229] getEnIndexTable
+2024-05-07 16:03:48 [INFO] johnchan: [FILE:../src/wordonline/Dictionary.cc] [Line:235] getCnIndexTable
+2024-05-07 16:18:22 [INFO] johnchan: [FILE:../src/wordonline/Dictionary.cc] [Line:31]
+2024-05-07 16:18:22 [INFO] johnchan: [FILE:../src/wordonline/Dictionary.cc] [Line:91] init finish
+2024-05-07 16:18:22 [INFO] johnchan: [FILE:../src/wordonline/Dictionary.cc] [Line:217] getenDict
+2024-05-07 16:18:22 [INFO] johnchan: [FILE:../src/wordonline/Dictionary.cc] [Line:223] getcnDict
+2024-05-07 16:18:22 [INFO] johnchan: [FILE:../src/wordonline/Dictionary.cc] [Line:229] getEnIndexTable
+2024-05-07 16:18:22 [INFO] johnchan: [FILE:../src/wordonline/Dictionary.cc] [Line:235] getCnIndexTable
+2024-05-07 16:18:50 [INFO] johnchan: [FILE:../src/wordonline/Dictionary.cc] [Line:31]
+2024-05-07 16:18:51 [INFO] johnchan: [FILE:../src/wordonline/Dictionary.cc] [Line:91] init finish
+2024-05-07 16:18:51 [INFO] johnchan: [FILE:../src/wordonline/Dictionary.cc] [Line:217] getenDict
+2024-05-07 16:18:51 [INFO] johnchan: [FILE:../src/wordonline/Dictionary.cc] [Line:223] getcnDict
+2024-05-07 16:18:51 [INFO] johnchan: [FILE:../src/wordonline/Dictionary.cc] [Line:229] getEnIndexTable
+2024-05-07 16:18:51 [INFO] johnchan: [FILE:../src/wordonline/Dictionary.cc] [Line:235] getCnIndexTable
+2024-05-07 16:19:23 [INFO] johnchan: [FILE:../src/wordonline/Dictionary.cc] [Line:31]
+2024-05-07 16:19:24 [INFO] johnchan: [FILE:../src/wordonline/Dictionary.cc] [Line:91] init finish
+2024-05-07 16:19:24 [INFO] johnchan: [FILE:../src/wordonline/Dictionary.cc] [Line:217] getenDict
+2024-05-07 16:19:24 [INFO] johnchan: [FILE:../src/wordonline/Dictionary.cc] [Line:223] getcnDict
+2024-05-07 16:19:24 [INFO] johnchan: [FILE:../src/wordonline/Dictionary.cc] [Line:229] getEnIndexTable
+2024-05-07 16:19:24 [INFO] johnchan: [FILE:../src/wordonline/Dictionary.cc] [Line:235] getCnIndexTable

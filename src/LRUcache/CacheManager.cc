@@ -1,8 +1,11 @@
-#include "CacheManager.h"
+#include "../../Include/LRUcache/CacheManager.h"
 CacheManager *CacheManager::_pInstance = nullptr;
 CacheManager::CacheManager()
 {
-    _cachelist.reserve(4);
+    //_cachelist.reserve(4);
+    for (int i = 0; i < 4; ++i){
+        _cachelist.emplace_back(1000);
+    }
 }
 CacheManager::~CacheManager() {}
 CacheManager *CacheManager::createInstance()

@@ -16,6 +16,7 @@ private:
 
 private:
     static CacheManager *_pInstance;
-    vector<LRUCache &> _cachelist;
+    vector<LRUCache > _cachelist;
+    //std::vector<std::reference_wrapper<LRUCache>> _cachelist;
 };
 #endif

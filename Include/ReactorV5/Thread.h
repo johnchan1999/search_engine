@@ -3,9 +3,19 @@
 
 #include <pthread.h>
 #include <functional>
+#include <string>
+#include "../LRUcache/CacheManager.h"
+using std::string;
 
 namespace OurPool
 {
+    namespace current_thread
+    {
+
+        extern __thread const char *_name;
+    }
+    // namespacOurPoole
+
     using std::bind;
     using std::function;
 
@@ -14,7 +24,7 @@ namespace OurPool
         using ThreadCallback = function<void()>;
 
     public:
-        Thread(ThreadCallback &&cb);
+        Thread(ThreadCallback &&cb, string name);
         ~Thread();
 
         // 线程运行与停止的函数
@@ -26,11 +36,11 @@ namespace OurPool
         static void *threadFunc(void *arg);
 
     private:
-        pthread_t _thid;    // 线程id
+        pthread_t _thid; // 线程id
+        string _name;
         bool _isRunning;    // 标识线程是否在运行
         ThreadCallback _cb; // 就是需要执行的任务
+        LRUCache _cache;
     };
-
-}; // end of OurPool
-
+};
 #endif

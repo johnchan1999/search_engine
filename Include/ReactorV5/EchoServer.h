@@ -1,17 +1,16 @@
-#ifndef __ECHOSERVER_H__
-#define __ECHOSERVER_H__
+#ifndef __ECHOSERVER_HH__
+#define __ECHOSERVER_HH__
 
 #include <nlohmann/json.hpp>
 #include "ThreadPool.h"
 #include "TcpServer.h"
 #include "TcpConnection.h"
+#include "Thread.h"
 #include "../KeyRecommander.h"
 #include "../WebPageSearch.h"
-#include "../ConnectionPool.h"
+#include "../LRUcache/CacheManager.h"
 
 #include <iostream>
-
-const int MAXNUM = 20;
 
 namespace OurPool
 {
@@ -24,10 +23,10 @@ namespace OurPool
     class MyTask
     {
     public:
-        MyTask(const string &msg, const TcpConnectionPtr &con, ConnectionPool &pool)
-            : _msg(msg), _con(con), _pool(pool) {}
+        MyTask(const string &msg, const TcpConnectionPtr &con)
+            : _msg(msg), _con(con) {}
 
-        void process()
+        void process1()
         {
             if (_msg.size() == 0)
             {
@@ -39,53 +38,59 @@ namespace OurPool
             {
                 word.pop_back();
             }
-            readmsg(id, word);
-        }
+            CacheManager *pInstance = CacheManager::createInstance();
+            auto cache = pInstance->getcache(atoi(current_thread::_name) + 1);
 
-        void readmsg(int id, string word)
-        {
             std::cout << ">> 收到客户端查询词：" << word << std::endl;
-            if (1 == id)
-            {
-                string result = checkRedis(1, word);
-                if (" " == result)
-                {
-                    result = getKeyRecommander(word, _con);
-                    std::cout << ">> 读取磁盘返回关键词查询结果成功 " << std::endl;
-                    if (storeToRedis(1, word, result) == false)
-                    {
-                        std::cerr << "Error: 53 :storedRedis keyword failed" << result << std::endl;
-                    }
-                }
-                else
-                {
-                    std::cout << ">> redis获取关键词查询结果成功 " << result << std::endl;
-                }
-                result.push_back('\n');
-                _con->sendInLoop(result);
-            }
-            else if (2 == id)
-            {
-                string result = checkRedis(2, word);
+            string result = checkLRU(1, word, cache);
+            cout << "result==" << result << endl;
 
-                if (" " == result)
+            if (" " == result)
+            {
+                result = getKeyRecommander(word, _con);
+                std::cout << ">> 读取磁盘返回关键词查询结果成功 " << std::endl;
+                if (storeToLRU(1, word, result, cache) == false)
                 {
-                    result = getWebRecommander(word);
-                    std::cout << ">> 读取磁盘获取网页查询结果成功 " << result << std::endl;
-                    storeToRedis(2, word, result);
+                    std::cerr << "Error: 53 :storedRedis keyword failed" << result << std::endl;
                 }
-                else
-                {
-                    std::cout << ">> redis获取网页查询结果成功 " << result << std::endl;
-                }
-
-                result.push_back('\n');
-                _con->sendInLoop(result);
             }
             else
             {
-                std::cerr << "Error: 消息id错误" << id << std::endl;
+                std::cout << ">> LRU获取关键词查询结果成功 " << result << std::endl;
             }
+            result.push_back('\n');
+            _con->sendInLoop(result);
+        }
+        void process2()
+        {
+            if (_msg.size() == 0)
+            {
+                return;
+            }
+            string word = getjsonword(_msg);
+            int id = getjsonid(_msg);
+            if (word.back() == '\n')
+            {
+                word.pop_back();
+            }
+            CacheManager *pInstance = CacheManager::createInstance();
+            auto cache = pInstance->getcache(atoi(current_thread::_name) + 1);
+            std::cout << ">> 收到客户端查询词：" << word << std::endl;
+            string result = checkLRU(2, word, cache);
+
+            if (" " == result)
+            {
+                result = getWebRecommander(word);
+                std::cout << ">> 读取磁盘获取网页查询结果成功 " << result << std::endl;
+                storeToLRU(2, word, result, cache);
+            }
+            else
+            {
+                std::cout << ">> LRU获取网页查询结果成功 " << result << std::endl;
+            }
+
+            result.push_back('\n');
+            _con->sendInLoop(result);
         }
 
         string getjsonword(const string &jsondata)
@@ -102,70 +107,16 @@ namespace OurPool
             return id;
         }
 
-        string checkRedis(int flag, const string &msg)
+        string checkLRU(int flag, const string &key, LRUCache &cache)
         {
-            redisContext *predis = _pool.getConnection();
 
-            if (predis != nullptr)
-            {
-                redisReply *reply = (redisReply *)redisCommand(predis, "select %d", flag);
-                reply = (redisReply *)redisCommand(predis, "get %s", msg.c_str());
-                if (reply == nullptr)
-                {
-                    _pool.releaseConnection(predis);
-                    return " ";
-                }
-                else
-                {
-                    if (REDIS_REPLY_STRING == reply->type)
-                    {
-                        string result = reply->str;
-                        freeReplyObject(reply);
-                        _pool.releaseConnection(predis);
-                        return result;
-                    }
-                    freeReplyObject(reply);
-                    _pool.releaseConnection(predis);
-                }
-            }
-            else
-            {
-                std::cerr << "checkRedis: redis connection failed" << std::endl;
-            }
-            return " ";
+            return cache.getelement(key);
         }
 
-        bool storeToRedis(int flag, const string &key, const string &value)
+        bool storeToLRU(int flag, const string &key, const string &value, LRUCache &cache)
         {
-            redisContext *predis = _pool.getConnection();
-            if (predis != nullptr)
-            {
-                redisReply *reply = (redisReply *)redisCommand(predis, "select %d", flag);
-                reply = (redisReply *)redisCommand(predis, "set %s %s", key.c_str(), value.c_str()); // 命令行参数格式const char*
-                if (reply == nullptr)
-                {
-                    freeReplyObject(reply);
-                    _pool.releaseConnection(predis);
-                    return false;
-                }
-                else
-                {
-                    if (REDIS_REPLY_STATUS == reply->type && 0 == strcmp(reply->str, "OK"))
-                    {
-                        std::cout << ">> " << key << "查询结果存储至redis" << std::endl;
-                        freeReplyObject(reply);
-                        _pool.releaseConnection(predis);
-                        return true;
-                    }
-                    freeReplyObject(reply);
-                }
-                _pool.releaseConnection(predis);
-            }
-            else
-            {
-                std::cerr << "storeToRedis: redis connection failed" << std::endl;
-            }
-            return false;
+            cache.addelement(key, value);
+            return true;
         }
 
         string getKeyRecommander(string msg, TcpConnectionPtr &con)
@@ -174,7 +125,7 @@ namespace OurPool
             diction->init("/root/search_engine/data/datfile");
             KeyRecommander reckey(msg, con, *diction);
             reckey.execute();
-            
+
             return reckey.response();
         }
         string getWebRecommander(const string &msg)
@@ -186,7 +137,6 @@ namespace OurPool
         }
 
     private:
-        ConnectionPool &_pool;
         TcpConnectionPtr _con; // 用于发送消息
         string _msg;           // 存放发送的消息
     };
@@ -198,8 +148,8 @@ namespace OurPool
             : _pool(threadNum, queSize) // 初始化线程池和任务队列
               ,
               _server(ip, port) // 初始化服务器
-              ,
-              _conPool("127.0.0.1", 6379, MAXNUM)
+
+        //_conPool("127.0.0.1", 6379, MAXNUM)
         {
         }
 
@@ -235,8 +185,23 @@ namespace OurPool
         {
             string msg = con->receive(); // 接收客户端的数据
             cout << ">>recv msg from client " << msg << endl;
-            MyTask task(msg, con, _conPool);                  // 创建新的任务
-            _pool.addTask(std::bind(&MyTask::process, task)); // 将任务添加到线程池
+            MyTask task(msg, con);
+            int id = task.getjsonid(msg);
+            cout << "id = " << id << endl;
+            if (id == 1)
+            {
+                cout << "do process id = 1" << endl;
+                _pool.addTask(std::bind(&MyTask::process1, task)); // 将任务添加到线程池
+            }
+            else if (id == 2)
+            {
+                cout << "do process id = 2" << endl;
+                _pool.addTask(std::bind(&MyTask::process2, task)); // 将任务添加到线程池
+            }
+            else
+            {
+                std::cerr << "Error: 消息id错误" << id << std::endl;
+            } // 创建新的任务
         }
 
         // 3、连接断开做的事件
@@ -248,7 +213,6 @@ namespace OurPool
     private:
         ThreadPool _pool;
         TcpServer _server;
-        ConnectionPool _conPool;
     };
 
 }; // end of OurPool
